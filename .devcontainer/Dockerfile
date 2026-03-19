@@ -51,6 +51,7 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-jazzy-xacro \
     ros-jazzy-rosbridge-server \
     ros-jazzy-image-transport \
+    ros-jazzy-urdf-tutorial \
     libmodbus-dev \
     python3-pip \
     python3-numpy \
