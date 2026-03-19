@@ -52,10 +52,6 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-jazzy-rosbridge-server \
     ros-jazzy-image-transport \
     libmodbus-dev \
-    
-
-# System tools for monitoring and development
-RUN sudo apt-get update && sudo apt-get install -y \
     python3-pip \
     python3-numpy \
     python3-yaml \
@@ -65,17 +61,6 @@ RUN sudo apt-get update && sudo apt-get install -y \
     psmisc \
     v4l-utils
 
-# Python packages for rover nodes
-RUN pip3 install --no-cache-dir --break-system-packages \
-    psutil
-
-# Install ROS dependencies from package.xml files.
-# rpi_ws/src is copied from the build context (repo root), rosdep runs,
-# then the copy is removed — dependencies are baked into the image layer.
-# COPY rpi_ws/src /tmp/rpi_ws_src/
-# RUN rosdep install -y --from-paths /tmp/rpi_ws_src -i -r --rosdistro jazzy \
-#     --skip-keys "libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev python-opencv python3-opencv ros-jazzy-ament-cmake-clang-tidy python3-ikpy-pip ament_python async_web_server_cpp" \
-#     && sudo rm -rf /tmp/rpi_ws_src
 
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
