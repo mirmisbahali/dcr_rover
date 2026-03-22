@@ -1,0 +1,20 @@
+<launch>
+
+  <!-- WebSocket bridge so the base station GUI can connect via roslib -->
+  <node pkg="rosbridge_server" exec="rosbridge_websocket" name="rosbridge_websocket" output="screen">
+    <param name="port" value="9090"/>
+  </node>
+
+  <!-- SocketCAN bridge — exposes CAN bus as socketcan_bridge/tx|rx topics -->
+  <node pkg="nobleo_socketcan_bridge" exec="socketcan_bridge" name="socketcan_bridge" output="screen"/>
+
+  <!-- Robotic arm controller (FK/IK, 6-DOF, subscribes /joy + socketcan_bridge/rx) -->
+  <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen"/>
+
+  <!-- Drivetrain RS485 motor service (/motor_rs485_service/issue_motor_command) -->
+  <node pkg="dcr_motor_controller" exec="controller" name="motor_rs485_service" output="screen"/>
+
+  <!-- Teleop bridge: maps /joy axes[1]/axes[3] → drivetrain motor service calls -->
+  <node pkg="dcr_joy_to_motor" exec="teleop" name="teleop" output="screen"/>
+
+</launch>
