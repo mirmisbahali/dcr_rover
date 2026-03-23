@@ -17,4 +17,25 @@
   <!-- Teleop bridge: maps /joy axes[1]/axes[3] → drivetrain motor service calls -->
   <node pkg="dcr_joy_to_motor" exec="teleop" name="teleop" output="screen"/>
 
+  <!-- HTTP MJPEG video server — serves ROS image topics to the GUI on port 8080 -->
+  <node pkg="web_video_server" exec="web_video_server" name="web_video_server" output="screen">
+    <param name="port" value="8080"/>
+  </node>
+
+  <!-- Camera nodes — edit config/cameras.yaml to set the correct /dev/videoX paths -->
+  <node pkg="rover_camera" exec="camera_node" name="camera1" output="screen">
+    <param from="$(find-pkg-share rover_bringup)/config/cameras.yaml"/>
+    <remap from="image_raw" to="/camera1/image_raw"/>
+  </node>
+
+  <node pkg="rover_camera" exec="camera_node" name="camera2" output="screen">
+    <param from="$(find-pkg-share rover_bringup)/config/cameras.yaml"/>
+    <remap from="image_raw" to="/camera2/image_raw"/>
+  </node>
+
+  <node pkg="rover_camera" exec="camera_node" name="camera3" output="screen">
+    <param from="$(find-pkg-share rover_bringup)/config/cameras.yaml"/>
+    <remap from="image_raw" to="/camera3/image_raw"/>
+  </node>
+
 </launch>
