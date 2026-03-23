@@ -52,7 +52,12 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-jazzy-rosbridge-server \
     ros-jazzy-image-transport \
     ros-jazzy-urdf-tutorial \
+    ros-jazzy-can-msgs \
+    ros-jazzy-diagnostic-updater \
+    ros-jazzy-joy \
     libmodbus-dev \
+    libfmt-dev \
+    linux-headers-generic \
     python3-pip \
     python3-numpy \
     python3-yaml \
