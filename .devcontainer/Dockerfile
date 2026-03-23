@@ -71,4 +71,3 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 RUN sudo python3 -m pip install minimalmodbus --index-url https://pypi.org/simple --break-system-packages
 RUN sudo python3 -m pip install ikpy --index-url https://pypi.org/simple --break-system-packages
-RUN sudo ip link set can0 type can bitrate 1000000
