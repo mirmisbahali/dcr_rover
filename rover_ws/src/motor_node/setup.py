@@ -11,7 +11,6 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/launch_arm.py']),
-        ('share/' + package_name + '/urdf', ['urdf/arm.urdf']),
     ],
     install_requires=['setuptools',
                     'ikpy'],

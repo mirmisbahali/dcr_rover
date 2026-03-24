@@ -1,14 +1,13 @@
-import os
 import numpy as np
 import ikpy.chain
-from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import Point
 
 class IKSolver:
     def __init__(self):
-        pkg_path = get_package_share_directory('motor_node')
-        urdf_path = os.path.join(pkg_path, 'urdf', 'arm.urdf')
-        self.chain = ikpy.chain.Chain.from_urdf_file(urdf_path, active_links_mask=[False, True, True, True, False])
+        # Define the robot chain
+        # pkg_path = get_package_share_directory('motor_node')
+        # urdf_path = os.path.join(pkg_path, 'urdf', 'arm.urdf')
+        self.chain = ikpy.chain.Chain.from_urdf_file('/dcr_rover/rover_ws/src/motor_node/urdf/arm.urdf',active_links_mask=[False, True, True, True, False])
         self.old_joints = [0.0] * len(self.chain.links)
 
     def solve(self, target_pos):
