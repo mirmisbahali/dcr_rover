@@ -18,6 +18,7 @@ def generate_launch_description():
         package='nobleo_socketcan_bridge',
         executable='socketcan_bridge',
         name='socketcan_bridge',
+        parameters=[{'interface': 'can1'}],
         output='screen'
     ))
 

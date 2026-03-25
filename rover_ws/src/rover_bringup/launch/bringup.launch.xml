@@ -6,7 +6,9 @@
   </node>
 
   <!-- SocketCAN bridge — exposes CAN bus as socketcan_bridge/tx|rx topics -->
-  <node pkg="nobleo_socketcan_bridge" exec="socketcan_bridge" name="socketcan_bridge" output="screen"/>
+  <node pkg="nobleo_socketcan_bridge" exec="socketcan_bridge" name="socketcan_bridge" output="screen">
+    <param name="interface" value="can1"/>
+  </node>
 
   <!-- Robotic arm controller (FK/IK, 6-DOF, subscribes /joy + socketcan_bridge/rx) -->
   <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen"/>
