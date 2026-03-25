@@ -4,21 +4,20 @@ from launch_ros.actions import Node
 def generate_launch_description():
     ld = LaunchDescription()
 
-    # # Joystick node
-    # ld.add_action(Node(
-    #     package='joy',
-    #     executable='joy_node',
-    #     name='joy_node',
-    #     #parameters=[{'autorepeat_rate': 0.0}],
-    #     output='screen'
-    # ))
+    # Joystick node
+    ld.add_action(Node(
+        package='joy',
+        executable='joy_node',
+        name='joy_node',
+        #parameters=[{'autorepeat_rate': 0.0}],
+        output='screen'
+    ))
 
     # SocketCAN bridge
     ld.add_action(Node(
         package='nobleo_socketcan_bridge',
         executable='socketcan_bridge',
         name='socketcan_bridge',
-        parameters=[{'interface': 'can1'}],
         output='screen'
     ))
 
