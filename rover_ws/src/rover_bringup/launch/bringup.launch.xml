@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="ee_serial_port" default="/dev/ttyUSB1"/>
+  <arg name="ee_serial_port" default="/dev/ttyUSB0"/>
 
   <!-- WebSocket bridge so the base station GUI can connect via roslib -->
   <node pkg="rosbridge_server" exec="rosbridge_websocket" name="rosbridge_websocket" output="screen">

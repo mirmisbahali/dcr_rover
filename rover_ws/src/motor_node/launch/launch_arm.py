@@ -14,7 +14,7 @@ def generate_launch_description():
 
     ld.add_action(DeclareLaunchArgument(
         'ee_serial_port',
-        default_value='/dev/ttyACM2',
+        default_value='/dev/ttyUSB0',
         description='Serial port for end effector ESP32'
     ))
 
