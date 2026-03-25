@@ -33,6 +33,8 @@ class Teleop(Node):
         self.client = self.create_client(MotorMovementCommand, '/motor_rs485_service/issue_motor_command')
 
         self.latest_message = None
+        self.last_joy_time = None
+        self.joy_timeout_sec = 0.5  # stop motors if no /joy message for 500ms
         self.processing_rate_hz = 3 # Process 2 messages per second
 
         self.create_timer(1/self.processing_rate_hz, self.process_teleop)
@@ -45,6 +47,7 @@ class Teleop(Node):
     def listener_callback(self, msg):
         """Stores the latest joystick message"""
         self.latest_message = msg
+        self.last_joy_time = self.get_clock().now()
         self.led_something()
 
     def send_motor_request(self, address, speed, direction):
@@ -66,6 +69,17 @@ class Teleop(Node):
 
     def process_teleop(self):
         try:
+            # Watchdog: stop motors if /joy has not been received recently
+            if self.last_joy_time is not None:
+                elapsed = (self.get_clock().now() - self.last_joy_time).nanoseconds / 1e9
+                if elapsed > self.joy_timeout_sec:
+                    self.get_logger().warn('No /joy message for %.2fs - stopping motors' % elapsed)
+                    self.send_motor_request(1, 0, 3)
+                    self.send_motor_request(2, 0, 3)
+                    self.latest_message = None
+                    self.last_joy_time = None
+                    return
+
             msg = self.latest_message
 
             if(msg):
