@@ -39,8 +39,8 @@ class Controller(Node):
         self.pos_goal = Point() #for Ik
         self.pos_current = Point()
 
-        self.ee_pos = 137 #137 is fully open, 105 is fully closed
-        self.last_ee_pos = 137
+        self.ee_pos = 140 #140 is fully open, 90 is fully closed
+        self.last_ee_pos = 140
         self.last_laser_button = False
 
         self.joint_limits = [
@@ -129,7 +129,7 @@ class Controller(Node):
             self.ee_pos = self.ee_pos + 2 # open with btn O
         if (joy_msg.buttons[3] == 1):
             self.ee_pos = self.ee_pos - 2 # close with btn SQUARE
-        self.ee_pos = max(105, min(self.ee_pos, 137))
+        self.ee_pos = max(90, min(self.ee_pos, 140))
         if abs(self.ee_pos - self.last_ee_pos) >= 4:
             self.last_ee_pos = self.ee_pos
             msg = String()
