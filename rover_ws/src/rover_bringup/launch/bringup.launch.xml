@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="ee_serial_port" default="/dev/ttyUSB0"/>
+  <arg name="serial_port" default="/dev/ttyUSB0"/>
 
   <!-- WebSocket bridge so the base station GUI can connect via roslib -->
   <node pkg="rosbridge_server" exec="rosbridge_websocket" name="rosbridge_websocket" output="screen">
@@ -18,9 +18,7 @@
   </node>
 
   <!-- Robotic arm controller (FK/IK, 6-DOF, subscribes /joy + socketcan_bridge/rx) -->
-  <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen">
-    <param name="ee_serial_port" value="$(var ee_serial_port)"/>
-  </node>
+  <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen"/>
 
   <!-- Drivetrain RS485 motor service (/motor_rs485_service/issue_motor_command) -->
   <node pkg="dcr_motor_controller" exec="controller" name="motor_rs485_service" output="screen"/>
@@ -51,7 +49,7 @@
 
   <!-- Antenna serial bridge - forwards /antenna/trigger chars to ESP32 over USB serial -->
   <node pkg="rover_antenna" exec="antenna_node" name="antenna_node" output="screen">
-    <param name="serial_port" value="/dev/ttyUSB0"/>
+    <param name="serial_port" value="$(var serial_port)"/>
     <param name="baud_rate" value="115200"/>
   </node>
 
