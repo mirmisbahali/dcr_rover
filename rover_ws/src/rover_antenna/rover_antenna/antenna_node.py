@@ -9,14 +9,14 @@ class AntennaNode(Node):
     def __init__(self):
         super().__init__('antenna_node')
 
-        self.declare_parameter('serial_port', '/dev/ttyUSB0')
+        self.declare_parameter('serial_port', '/dev/ttyACM1')
         self.declare_parameter('baud_rate', 115200)
 
         serial_port = self.get_parameter('serial_port').value
         baud_rate = self.get_parameter('baud_rate').value
 
         try:
-            self.ser = serial.Serial(serial_port, baud_rate, timeout=1)
+            self.ser = sserialerial.Serial(serial_port, baud_rate, timeout=1)
             self.get_logger().info(f'Opened serial port {serial_port} at {baud_rate} baud')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to open serial port {serial_port}: {e}')

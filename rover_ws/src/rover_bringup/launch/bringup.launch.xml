@@ -1,5 +1,7 @@
 <launch>
 
+  <arg name="ee_serial_port" default="/dev/ttyUSB1"/>
+
   <!-- WebSocket bridge so the base station GUI can connect via roslib -->
   <node pkg="rosbridge_server" exec="rosbridge_websocket" name="rosbridge_websocket" output="screen">
     <param name="port" value="9090"/>
@@ -11,7 +13,9 @@
   </node>
 
   <!-- Robotic arm controller (FK/IK, 6-DOF, subscribes /joy + socketcan_bridge/rx) -->
-  <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen"/>
+  <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen">
+    <param name="ee_serial_port" value="$(var ee_serial_port)"/>
+  </node>
 
   <!-- Drivetrain RS485 motor service (/motor_rs485_service/issue_motor_command) -->
   <node pkg="dcr_motor_controller" exec="controller" name="motor_rs485_service" output="screen"/>

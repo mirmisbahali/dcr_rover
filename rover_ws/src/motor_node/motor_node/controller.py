@@ -1,3 +1,4 @@
+import serial
 import rclpy
 from rclpy.node import Node
 from rcl_interfaces.msg import SetParametersResult
@@ -19,6 +20,15 @@ class Controller(Node):
         self.declare_parameter('fk_speed', [5, 5, 5, 10, 10, 10])
         self.fk_speed = self.get_parameter('fk_speed').value
         self.add_on_set_parameters_callback(self.parameter_callback)
+
+        self.declare_parameter('ee_serial_port', '/dev/ttyACM2')
+        ee_serial_port = self.get_parameter('ee_serial_port').value
+        try:
+            self.ee_serial = serial.Serial(ee_serial_port, 115200, timeout=1)
+            self.get_logger().info(f'Opened EE serial port {ee_serial_port}')
+        except serial.SerialException as e:
+            self.get_logger().error(f'Failed to open EE serial port {ee_serial_port}: {e}')
+            self.ee_serial = None
 
         self.mode = 0 # 0 is fk-spd control, 1 is ik-pos control
         self.last_toggle_buttons = False
@@ -130,8 +140,8 @@ class Controller(Node):
         self.ee_pos = max(105, min(self.ee_pos, 137))
         if (abs(self.ee_pos - self.last_ee_pos) >= 4):
             self.last_ee_pos = self.ee_pos
-            ee_cmd = self.motor.ee_set_pos(self.ee_pos)
-            self.can_publisher.publish(ee_cmd)
+            if self.ee_serial and self.ee_serial.is_open:
+                self.ee_serial.write(f"{self.ee_pos}\n".encode())
         if (joy_msg.buttons[0] == 1 and not self.last_laser_button):
             self.can_publisher.publish(self.motor.ee_laser())
         self.last_laser_button = (joy_msg.buttons[0] == 1) # laser with btn X
@@ -222,6 +232,11 @@ class Controller(Node):
     #             #self.get_logger().info(f"Controller sending fk mode")
     #             command.mode = False
     #         self.motor_move_publisher.publish(command)
+
+    def destroy_node(self):
+        if self.ee_serial and self.ee_serial.is_open:
+            self.ee_serial.close()
+        super().destroy_node()
 
 def main():
     rclpy.init()
