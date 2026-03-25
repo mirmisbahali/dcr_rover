@@ -40,4 +40,10 @@
     <remap from="image_raw" to="/camera3/image_raw"/>
   </node>
 
+  <!-- Antenna serial bridge — forwards /antenna/trigger chars to ESP32 over USB serial -->
+  <node pkg="rover_antenna" exec="antenna_node" name="antenna_node" output="screen">
+    <param name="serial_port" value="/dev/ttyUSB0"/>
+    <param name="baud_rate" value="115200"/>
+  </node>
+
 </launch>
