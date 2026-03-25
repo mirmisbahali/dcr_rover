@@ -12,6 +12,11 @@
     <param name="interface" value="can1"/>
   </node>
 
+  <!-- Robot state publisher — converts /joint_states to /tf for Foxglove visualisation -->
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
+    <param name="robot_description" textfile="$(find-pkg-share motor_node)/urdf/arm.urdf"/>
+  </node>
+
   <!-- Robotic arm controller (FK/IK, 6-DOF, subscribes /joy + socketcan_bridge/rx) -->
   <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen">
     <param name="ee_serial_port" value="$(var ee_serial_port)"/>

@@ -66,8 +66,8 @@ class Controller(Node):
 
         self.stat_publisher_1 = self.create_publisher(MotorStat1, '/motor_stat_1', 15)
         self.stat_publisher_2 = self.create_publisher(MotorStat2, '/motor_stat_2', 15)
-        timer_period = 0.5  # seconds
-        self.stat_timer = self.create_timer(timer_period, self.stat_timer_callback)
+        self.stat_timer = self.create_timer(0.5, self.stat_timer_callback)
+        self.viz_timer = self.create_timer(0.05, self.viz_timer_callback)  # 20 Hz for joint states
 
         for i in range (6):
             can_cmd = self.motor.set_home(i + 1)
@@ -201,8 +201,9 @@ class Controller(Node):
         self.can_publisher.publish(stat_msg1)
 
         stat_msg2 = self.motor.send_status_2()
-        self.can_publisher.publish(stat_msg2)  
+        self.can_publisher.publish(stat_msg2)
 
+    def viz_timer_callback(self):
         viz_msg = JointState()
         viz_msg.header.stamp = self.get_clock().now().to_msg()
         viz_msg.name = [
