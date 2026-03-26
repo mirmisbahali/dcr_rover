@@ -20,7 +20,7 @@ class CameraNode(Node):
         fps = self.get_parameter('fps').get_parameter_value().integer_value
 
         self._bridge = CvBridge()
-        self._pub = self.create_publisher(Image, 'image_raw', 10)
+        self._pub = self.create_publisher(Image, 'image_raw', 1)
 
         self._cap = cv2.VideoCapture(device)
         if not self._cap.isOpened():

@@ -51,6 +51,7 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-jazzy-xacro \
     ros-jazzy-rosbridge-server \
     ros-jazzy-image-transport \
+    ros-jazzy-v4l2-camera \
     ros-jazzy-urdf-tutorial \
     ros-jazzy-can-msgs \
     ros-jazzy-diagnostic-updater \

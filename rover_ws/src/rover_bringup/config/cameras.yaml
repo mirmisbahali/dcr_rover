@@ -4,25 +4,33 @@
 # USB cameras typically appear as /dev/video0, /dev/video2, /dev/video4, ...
 # (each camera exposes two video nodes; use the even-numbered one).
 #
-# Node names below must match the `name=` attributes in bringup.launch.xml.
+# Node names below must match the `namespace=` attributes in bringup.launch.xml.
+#
+# pixel_format: MJPG captures compressed frames directly from camera hardware,
+# publishing to image_raw/compressed. This avoids ~921 KB/frame uncompressed
+# traffic through the ROS middleware. If your camera does not support MJPG,
+# remove the pixel_format line (defaults to YUYV/BGR8 raw).
 
 /camera1:
   ros__parameters:
-    device: /dev/video0   # Front camera — change to your USB port
-    width: 640
-    height: 480
-    fps: 30
+    video_device: /dev/video0   # Front camera — change to your USB port
+    image_width: 640
+    image_height: 480
+    framerate: 15.0
+    pixel_format: MJPG
 
 /camera2:
   ros__parameters:
-    device: /dev/video2   # Rear camera — change to your USB port
-    width: 640
-    height: 480
-    fps: 30
+    video_device: /dev/video2   # Rear camera — change to your USB port
+    image_width: 640
+    image_height: 480
+    framerate: 15.0
+    pixel_format: MJPG
 
 /camera3:
   ros__parameters:
-    device: /dev/video4   # Arm camera — change to your USB port
-    width: 640
-    height: 480
-    fps: 30
+    video_device: /dev/video4   # Arm camera — change to your USB port
+    image_width: 640
+    image_height: 480
+    framerate: 15.0
+    pixel_format: MJPG
