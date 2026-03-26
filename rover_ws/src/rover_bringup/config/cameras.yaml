@@ -13,7 +13,7 @@
 
 /camera1:
   ros__parameters:
-    video_device: /dev/video0   # Front camera — change to your USB port
+    video_device: /dev/video2   # Front camera — change to your USB port
     image_width: 640
     image_height: 480
     framerate: 15.0
@@ -21,7 +21,7 @@
 
 /camera2:
   ros__parameters:
-    video_device: /dev/video2   # Rear camera — change to your USB port
+    video_device: /dev/video4   # Rear camera — change to your USB port
     image_width: 640
     image_height: 480
     framerate: 15.0
@@ -29,7 +29,7 @@
 
 /camera3:
   ros__parameters:
-    video_device: /dev/video4   # Arm camera — change to your USB port
+    video_device: /dev/video0   # Arm camera — change to your USB port
     image_width: 640
     image_height: 480
     framerate: 15.0
