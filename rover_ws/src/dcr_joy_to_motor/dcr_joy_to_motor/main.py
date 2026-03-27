@@ -92,17 +92,17 @@ class Teleop(Node):
                 left_direction = 3
                 right_direction = 3
 
-                if left_joystick > 0: 
-                    left_direction = 1
-                if right_joystick > 0: 
-                    right_direction = 2
-                if left_joystick < 0: 
+                if left_joystick > 0:
                     left_direction = 2
-                if right_joystick < 0: 
+                if right_joystick > 0:
                     right_direction = 1
+                if left_joystick < 0:
+                    left_direction = 1
+                if right_joystick < 0:
+                    right_direction = 2
 
-                self.send_motor_request(1, abs(left_joystick), left_direction)
-                self.send_motor_request(2, abs(right_joystick), right_direction)
+                self.send_motor_request(2, abs(left_joystick), left_direction)
+                self.send_motor_request(1, abs(right_joystick), right_direction)
                 print(right_joystick)
                 self.latest_message = None
         except:
