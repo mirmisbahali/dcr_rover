@@ -38,12 +38,12 @@ RUN rosdep update
 # need to be run manually after container creation. The src tree is copied to a
 # temporary location, rosdep resolves and installs all deps, then the copy is
 # removed. The real rover_ws is bind-mounted at runtime on top.
-COPY rover_ws/src/ /tmp/rover_ws/src/
-RUN cd /tmp/rover_ws && \
-    sudo rosdep install --from-paths src -i -r --rosdistro jazzy -y \
-      --skip-keys "libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev \
-                   python-opencv python3-opencv ros-jazzy-ament-cmake-clang-tidy \
-                   python3-ikpy-pip"
+# COPY rover_ws/src/ /tmp/rover_ws/src/
+# RUN cd /tmp/rover_ws && \
+#     sudo rosdep install --from-paths src -i -r --rosdistro jazzy -y \
+#       --skip-keys "libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev \
+#                    python-opencv python3-opencv ros-jazzy-ament-cmake-clang-tidy \
+#                    python3-ikpy-pip"
 
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/install/setup.bash" >> ~/.bashrc
@@ -55,29 +55,29 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/install/setup.bash" >> ~/.bashrc
 # apt-get install ros-jazzy-* does not work in dustynv base images because
 
 RUN sudo apt-get update && sudo apt-get install -y \
-    ros-jazzy-ros2-control \
-    ros-jazzy-ros2-controllers \
+    # ros-jazzy-ros2-control \
+    # ros-jazzy-ros2-controllers \
     ros-jazzy-joint-state-publisher \
     ros-jazzy-robot-state-publisher \
     ros-jazzy-xacro \
     ros-jazzy-rosbridge-server \
-    ros-jazzy-image-transport \
+    # ros-jazzy-image-transport \
     ros-jazzy-urdf-tutorial \
     ros-jazzy-can-msgs \
     ros-jazzy-diagnostic-updater \
     ros-jazzy-foxglove-bridge \
-    libmodbus-dev \
+    # libmodbus-dev \
     libfmt-dev \
     linux-headers-generic \
     python3-pip \
-    python3-numpy \
+    # python3-numpy \
     python3-yaml \
     wireless-tools \
     net-tools \
     iputils-ping \
     psmisc \
-    python3-opencv \
-    iproute2 \
+    # python3-opencv \
+    # iproute2 \
     v4l-utils
 
 
