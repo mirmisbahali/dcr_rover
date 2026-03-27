@@ -33,7 +33,7 @@ class Controller(Node):
 
         self.estop_subscriber = self.create_subscription(Bool, '/estop', self.estop_callback, 10)
 
-        self.ik_solver = IKSolver()
+        # self.ik_solver = IKSolver()
         #self.joints = [0.0, 0.0, 0.0,0.0, 0.0, 0.0]
         self.current_joints = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.pos_goal = Point() #for Ik
@@ -44,11 +44,11 @@ class Controller(Node):
         self.last_laser_button = False
 
         self.joint_limits = [
-            {"min": -185.0, "max": 185.0},  # Joint 1
+            {"min": -125.0, "max": 125.0},  # Joint 1
             {"min": -5, "max":  185.0},  # Joint 2
-            {"min": -5, "max": 275.0},  # Joint 3
-            {"min":  -95.0, "max":  185.0},  # Joint 4
-            {"min": -5, "max": 275.0},  # Joint 5
+            {"min": -185, "max": 185.0},  # Joint 3
+            {"min":  -125.0, "max":  125.0},  # Joint 4
+            {"min": -5.0, "max": 185.0},  # Joint 5
             {"min":  -185.0, "max":  185.0},  # Joint 6
         ]
         #self.motor_move_publisher = self.create_publisher(MotorMove, '/motor_move', 15)
@@ -61,44 +61,42 @@ class Controller(Node):
         self.stat_timer = self.create_timer(0.5, self.stat_timer_callback)
         self.viz_timer = self.create_timer(0.05, self.viz_timer_callback)  # 20 Hz for joint states
 
-        for i in range (6):
-            can_cmd = self.motor.set_home(i + 1)
-            self.can_publisher.publish(can_cmd)
+        self.homed = False
 
     def joy_callback(self, joy_msg):
-        toggle_pressed = (joy_msg.buttons[4] == 1 and joy_msg.buttons[5] == 1)
-        if toggle_pressed and not self.last_toggle_buttons:
-            if self.mode == 0:
-                self.pos_goal = self.pos_current
-                self.ik_solver.old_joints = [0.0] + [j / 57.2958 for j in self.current_joints] + [0.0]
-                #self.get_logger().info(f"new old joints are: {str(self.ik_solver.old_joints)}")
-                self.mode = 1
-                self.get_logger().info("going in IK mode")
-            elif self.mode == 1:
-                self.mode = 0
-                self.get_logger().info("going in FK mode")
-        self.last_toggle_buttons = toggle_pressed
+        # toggle_pressed = (joy_msg.buttons[4] == 1 and joy_msg.buttons[5] == 1)
+        # if toggle_pressed and not self.last_toggle_buttons:
+        #     if self.mode == 0:
+        #         self.pos_goal = self.pos_current
+        #         self.ik_solver.old_joints = [0.0] + [j / 57.2958 for j in self.current_joints] + [0.0]
+        #         #self.get_logger().info(f"new old joints are: {str(self.ik_solver.old_joints)}")
+        #         self.mode = 1
+        #         self.get_logger().info("going in IK mode")
+        #     elif self.mode == 1:
+        #         self.mode = 0
+        #         self.get_logger().info("going in FK mode")
+        # self.last_toggle_buttons = toggle_pressed
 
         spd_cmd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-        if (self.mode == 1):
-            self.get_logger().info(f"Pos Goal is {self.pos_goal.x}, {self.pos_goal.y}, {self.pos_goal.z}")
-            self.pos_goal.x += joy_msg.axes[0] / 500 # Lx
-            self.pos_goal.y += joy_msg.axes[1] / 500 # Ly
-            self.pos_goal.z += joy_msg.axes[4] / 500 # Ry
-            angle_cmd = self.ik_solver.solve(self.pos_goal)
-            for i in range(3):
-                if (angle_cmd[i] < self.joint_limits[i]["min"] or angle_cmd[i] > self.joint_limits[i]["max"]):
-                    self.get_logger().warn(f"Motor {i + 1} reached limit")
-                    self.mode = 0
-                    self.get_logger().info("Joint limit hit, switching to FK mode")
-                    break
-                else:
-                    self.get_logger().info(f"Motor {i + 1} going to {angle_cmd[i]}")
-                    can_cmd = self.motor.position_control(i + 1, angle_cmd[i])
-                    #self.get_logger().info(f"Byte frame is {can_cmd.data[1]}, {can_cmd.data[2]}, {can_cmd.data[3]}, {can_cmd.data[4]}")
-                    self.can_publisher.publish(can_cmd) 
-        elif (self.mode == 0):
+        # if (self.mode == 1):
+        #     self.get_logger().info(f"Pos Goal is {self.pos_goal.x}, {self.pos_goal.y}, {self.pos_goal.z}")
+        #     self.pos_goal.x += joy_msg.axes[0] / 500 # Lx
+        #     self.pos_goal.y += joy_msg.axes[1] / 500 # Ly
+        #     self.pos_goal.z += joy_msg.axes[4] / 500 # Ry
+        #     angle_cmd = self.ik_solver.solve(self.pos_goal)
+        #     for i in range(3):
+        #         if (angle_cmd[i] < self.joint_limits[i]["min"] or angle_cmd[i] > self.joint_limits[i]["max"]):
+        #             self.get_logger().warn(f"Motor {i + 1} reached limit")
+        #             self.mode = 0
+        #             self.get_logger().info("Joint limit hit, switching to FK mode")
+        #             break
+        #         else:
+        #             self.get_logger().info(f"Motor {i + 1} going to {angle_cmd[i]}")
+        #             can_cmd = self.motor.position_control(i + 1, angle_cmd[i])
+        #             #self.get_logger().info(f"Byte frame is {can_cmd.data[1]}, {can_cmd.data[2]}, {can_cmd.data[3]}, {can_cmd.data[4]}")
+        #             self.can_publisher.publish(can_cmd) 
+        if (self.mode == 0):
             spd_cmd[0] = joy_msg.axes[0] * -self.fk_speed[0] #Lx
             spd_cmd[1] = joy_msg.axes[1] * self.fk_speed[1] #Ly
             spd_cmd[2] = joy_msg.axes[4] * self.fk_speed[2] #Ry
@@ -113,7 +111,7 @@ class Controller(Node):
                 self.can_publisher.publish(can_cmd)
         
         spd_cmd[3] = joy_msg.axes[3] * -self.fk_speed[3] # Rx
-        spd_cmd[4] = joy_msg.axes[7] * self.fk_speed[4] # Pad y
+        spd_cmd[4] = joy_msg.axes[7] * -self.fk_speed[4] # Pad y
         spd_cmd[5] = joy_msg.axes[6] * self.fk_speed[5] # Pad x
         for i in range (3,6):
             if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):
@@ -142,7 +140,7 @@ class Controller(Node):
         if (joy_msg.buttons[10] == 1):
              self.can_publisher.publish(self.motor.clr_faults()) # clear faults with PS
 
-        self.pos_current = self.ik_solver.desolve(self.current_joints)
+        #self.pos_current = self.ik_solver.desolve(self.current_joints)
 
     def parameter_callback(self, params):
         for param in params:
@@ -190,6 +188,13 @@ class Controller(Node):
             
 
     def stat_timer_callback(self):
+        if not self.homed:
+            for i in range (6):
+                can_cmd = self.motor.set_home(i + 1)
+                self.can_publisher.publish(can_cmd)
+            self.homed = True
+            return
+            
         stat_msg1 = self.motor.send_status_1()
         self.can_publisher.publish(stat_msg1)
 
