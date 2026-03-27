@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="serial_port" default="/dev/ttyUSB0"/>
+  <arg name="serial_port" default="/dev/ttyACM1"/>
 
   <!-- WebSocket bridge so the base station GUI can connect via roslib -->
   <node pkg="rosbridge_server" exec="rosbridge_websocket" name="rosbridge_websocket" output="screen">
@@ -12,11 +12,6 @@
     <param name="interface" value="can1"/>
   </node>
 
-  <!-- Robot state publisher - converts /joint_states to /tf for Foxglove visualisation -->
-  <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
-    <param name="robot_description" value="$(command 'cat $(find-pkg-share motor_node)/urdf/arm.urdf')"/>
-  </node>
-
   <!-- Robotic arm controller (FK/IK, 6-DOF, subscribes /joy + socketcan_bridge/rx) -->
   <node pkg="motor_node" exec="start_controller" name="motor_controller" output="screen"/>
 
@@ -26,14 +21,19 @@
   <!-- Teleop bridge: maps /joy axes[1]/axes[3] to drivetrain motor service calls -->
   <node pkg="dcr_joy_to_motor" exec="teleop" name="teleop" output="screen"/>
 
+  <!-- Robot state publisher - converts /joint_states to /tf for Foxglove visualisation -->
+  <!-- <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
+    <param name="robot_description" value="$(command 'cat $(find-pkg-share motor_node)/urdf/arm.urdf')"/>
+  </node> -->
+
   <!-- HTTP MJPEG/H.264 video server - serves ROS image topics to the GUI on port 8080 -->
-  <node pkg="web_video_server" exec="web_video_server" name="web_video_server" output="screen">
+  <!-- <node pkg="web_video_server" exec="web_video_server" name="web_video_server" output="screen">
     <param name="port" value="8080"/>
     <param name="server_threads" value="4"/>
-  </node>
+  </node> -->
 
   <!-- Camera nodes - edit config/cameras.yaml to set the correct /dev/videoX paths -->
-  <node pkg="v4l2_camera" exec="v4l2_camera_node" name="camera1" namespace="camera1" output="screen">
+  <!-- <node pkg="v4l2_camera" exec="v4l2_camera_node" name="camera1" namespace="camera1" output="screen">
     <param from="$(find-pkg-share rover_bringup)/config/cameras.yaml"/>
   </node>
 
@@ -43,7 +43,7 @@
 
   <node pkg="v4l2_camera" exec="v4l2_camera_node" name="camera3" namespace="camera3" output="screen">
     <param from="$(find-pkg-share rover_bringup)/config/cameras.yaml"/>
-  </node>
+  </node> -->
 
   <!-- Antenna serial bridge - forwards /antenna/trigger chars to ESP32 over USB serial -->
   <node pkg="rover_antenna" exec="antenna_node" name="antenna_node" output="screen">
