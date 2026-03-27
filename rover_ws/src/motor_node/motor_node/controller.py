@@ -111,7 +111,7 @@ class Controller(Node):
                 self.can_publisher.publish(can_cmd)
         
         spd_cmd[3] = joy_msg.axes[3] * -self.fk_speed[3] # Rx
-        spd_cmd[4] = joy_msg.axes[7] * self.fk_speed[4] # Pad y
+        spd_cmd[4] = joy_msg.axes[7] * -self.fk_speed[4] # Pad y
         spd_cmd[5] = joy_msg.axes[6] * self.fk_speed[5] # Pad x
         for i in range (3,6):
             # if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):

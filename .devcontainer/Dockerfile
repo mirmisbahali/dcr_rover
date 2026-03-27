@@ -77,7 +77,7 @@ RUN sudo apt-get update && sudo apt-get install -y \
     iputils-ping \
     psmisc \
     # python3-opencv \
-    # iproute2 \
+    iproute2 \
     v4l-utils
 
 
