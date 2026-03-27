@@ -34,6 +34,18 @@ RUN sudo apt-get install -y git
 # Rosdep update
 RUN rosdep update
 
+# Pre-install workspace rosdep dependencies at image build time so they don't
+# need to be run manually after container creation. The src tree is copied to a
+# temporary location, rosdep resolves and installs all deps, then the copy is
+# removed. The real rover_ws is bind-mounted at runtime on top.
+COPY rover_ws/src/ /tmp/rover_ws/src/
+RUN cd /tmp/rover_ws && \
+    rosdep install --from-paths src -i -r --rosdistro jazzy -y \
+      --skip-keys "libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev \
+                   python-opencv python3-opencv ros-jazzy-ament-cmake-clang-tidy \
+                   python3-ikpy-pip" && \
+    rm -rf /tmp/rover_ws
+
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/install/setup.bash" >> ~/.bashrc
 
