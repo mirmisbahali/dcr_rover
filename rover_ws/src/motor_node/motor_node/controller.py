@@ -43,14 +43,14 @@ class Controller(Node):
         self.last_ee_pos = 140
         self.last_laser_button = False
 
-        self.joint_limits = [
-            {"min": -125.0, "max": 125.0},  # Joint 1
-            {"min": -5, "max":  185.0},  # Joint 2
-            {"min": -185, "max": 185.0},  # Joint 3
-            {"min":  -125.0, "max":  125.0},  # Joint 4
-            {"min": -5.0, "max": 185.0},  # Joint 5
-            {"min":  -185.0, "max":  185.0},  # Joint 6
-        ]
+        # self.joint_limits = [
+        #     {"min": -125.0, "max": 125.0},  # Joint 1
+        #     {"min": -5, "max":  185.0},  # Joint 2
+        #     {"min": -185, "max": 185.0},  # Joint 3
+        #     {"min":  -125.0, "max":  125.0},  # Joint 4
+        #     {"min": -5.0, "max": 185.0},  # Joint 5
+        #     {"min":  -185.0, "max":  185.0},  # Joint 6
+        # ]
         #self.motor_move_publisher = self.create_publisher(MotorMove, '/motor_move', 15)
         #self.motor_stat1_subscriber = self.create_subscription(MotorStat1, 'motor_stat_1', self.motor_stat1_callback, 50)
         self.joy_subscriber = self.create_subscription(Joy, '/arm/joy', self.joy_callback, 30)
@@ -58,7 +58,7 @@ class Controller(Node):
 
         self.stat_publisher_1 = self.create_publisher(MotorStat1, '/motor_stat_1', 15)
         self.stat_publisher_2 = self.create_publisher(MotorStat2, '/motor_stat_2', 15)
-        self.stat_timer = self.create_timer(0.5, self.stat_timer_callback)
+        self.stat_timer = self.create_timer(0.25, self.stat_timer_callback)
         self.viz_timer = self.create_timer(0.05, self.viz_timer_callback)  # 20 Hz for joint states
 
         self.homed = False
@@ -101,25 +101,25 @@ class Controller(Node):
             spd_cmd[1] = joy_msg.axes[1] * self.fk_speed[1] #Ly
             spd_cmd[2] = joy_msg.axes[4] * self.fk_speed[2] #Ry
             for i in range(3):
-                if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):
-                    self.get_logger().warn(f"Motor {i + 1} reaching min limit")
-                    spd_cmd[i] = 0
-                elif (self.current_joints[i] >= self.joint_limits[i]["max"] - 5 and spd_cmd[i] > 0):
-                    self.get_logger().warn(f"Motor {i + 1} reaching max limit")
-                    spd_cmd[i] = 0
+                # if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):
+                #     self.get_logger().warn(f"Motor {i + 1} reaching min limit")
+                #     spd_cmd[i] = 0
+                # elif (self.current_joints[i] >= self.joint_limits[i]["max"] - 5 and spd_cmd[i] > 0):
+                #     self.get_logger().warn(f"Motor {i + 1} reaching max limit")
+                #     spd_cmd[i] = 0
                 can_cmd = self.motor.speed_control(i + 1, spd_cmd[i])
                 self.can_publisher.publish(can_cmd)
         
         spd_cmd[3] = joy_msg.axes[3] * -self.fk_speed[3] # Rx
-        spd_cmd[4] = joy_msg.axes[7] * -self.fk_speed[4] # Pad y
+        spd_cmd[4] = joy_msg.axes[7] * self.fk_speed[4] # Pad y
         spd_cmd[5] = joy_msg.axes[6] * self.fk_speed[5] # Pad x
         for i in range (3,6):
-            if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):
-                    self.get_logger().warn(f"Motor {i + 1} reaching min limit")
-                    spd_cmd[i] = 0
-            elif (self.current_joints[i] >= self.joint_limits[i]["max"] - 5 and spd_cmd[i] > 0):
-                self.get_logger().warn(f"Motor {i + 1} reaching max limit")
-                spd_cmd[i] = 0
+            # if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):
+            #         self.get_logger().warn(f"Motor {i + 1} reaching min limit")
+            #         spd_cmd[i] = 0
+            # elif (self.current_joints[i] >= self.joint_limits[i]["max"] - 5 and spd_cmd[i] > 0):
+            #     self.get_logger().warn(f"Motor {i + 1} reaching max limit")
+            #     spd_cmd[i] = 0
             can_cmd = self.motor.speed_control(i + 1, spd_cmd[i])
             self.can_publisher.publish(can_cmd)
         
@@ -174,17 +174,17 @@ class Controller(Node):
             motor_stat = self.motor.read_status_1(can_rx_msg)
             #if (motor_stat.id < 4):
             if 1 <= motor_stat.id <= 6:
-                self.current_joints[motor_stat.id - 1] = self.to_signed_angle(motor_stat.angle)
+                self.current_joints[motor_stat.id - 1] = motor_stat.angle
             self.stat_publisher_1.publish(motor_stat)
         elif can_rx_msg.data[0] == 0xAE:
             motor_stat = self.motor.read_status_2(can_rx_msg)
             self.stat_publisher_2.publish(motor_stat)
        # if can_rx_msg.id == 0x107:
 
-    def to_signed_angle(self, angle):
-        if angle > 180.0:
-            angle -= 360.0
-        return angle
+    # def to_signed_angle(self, angle):
+    #     if angle > 180.0:
+    #         angle -= 360.0
+    #     return angle
             
 
     def stat_timer_callback(self):
