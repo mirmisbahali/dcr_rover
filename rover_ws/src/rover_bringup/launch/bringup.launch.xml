@@ -7,6 +7,12 @@
     <param name="port" value="9090"/>
   </node>
 
+    <!-- Foxglove bridge -->
+  <node pkg="foxglove_bridge" exec="foxglove_bridge" name="foxglove_bridge" output="screen">
+    <param name="port" value="8765"/>
+  </node>
+
+
   <!-- SocketCAN bridge - exposes CAN bus as socketcan_bridge/tx|rx topics -->
   <node pkg="nobleo_socketcan_bridge" exec="socketcan_bridge" name="socketcan_bridge" output="screen">
     <param name="interface" value="can1"/>
