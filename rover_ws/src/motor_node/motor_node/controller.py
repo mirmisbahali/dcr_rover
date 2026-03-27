@@ -16,7 +16,7 @@ class Controller(Node):
     def __init__(self):
         super().__init__('Controller')
 
-        self.declare_parameter('fk_speed', [5, 5, 5, 10, 10, 10])
+        self.declare_parameter('fk_speed', [5, 3, 5, 10, 10, 10])
         self.fk_speed = self.get_parameter('fk_speed').value
         self.add_on_set_parameters_callback(self.parameter_callback)
 
@@ -48,7 +48,7 @@ class Controller(Node):
             {"min": -5, "max":  185.0},  # Joint 2
             {"min": -5, "max": 275.0},  # Joint 3
             {"min":  -95.0, "max":  185.0},  # Joint 4
-            {"min": -5, "max": 215.0},  # Joint 5
+            {"min": -5, "max": 275.0},  # Joint 5
             {"min":  -185.0, "max":  185.0},  # Joint 6
         ]
         #self.motor_move_publisher = self.create_publisher(MotorMove, '/motor_move', 15)
@@ -113,7 +113,7 @@ class Controller(Node):
                 self.can_publisher.publish(can_cmd)
         
         spd_cmd[3] = joy_msg.axes[3] * -self.fk_speed[3] # Rx
-        spd_cmd[4] = joy_msg.axes[7] * -self.fk_speed[4] # Pad y
+        spd_cmd[4] = joy_msg.axes[7] * self.fk_speed[4] # Pad y
         spd_cmd[5] = joy_msg.axes[6] * self.fk_speed[5] # Pad x
         for i in range (3,6):
             if (self.current_joints[i] <= self.joint_limits[i]["min"] + 5 and spd_cmd[i] < 0):
@@ -129,7 +129,7 @@ class Controller(Node):
             self.ee_pos = self.ee_pos + 2 # open with btn O
         if (joy_msg.buttons[3] == 1):
             self.ee_pos = self.ee_pos - 2 # close with btn SQUARE
-        self.ee_pos = max(90, min(self.ee_pos, 140))
+        self.ee_pos = max(100, min(self.ee_pos, 160))
         if abs(self.ee_pos - self.last_ee_pos) >= 4:
             self.last_ee_pos = self.ee_pos
             msg = String()
@@ -203,8 +203,11 @@ class Controller(Node):
             'base_joint',
             'shoulder_joint',
             'elbow_joint',
+            'yaw_joint',
+            'pitch_joint',
+            'roll_joint'
         ]
-        viz_msg.position = [j * 0.0174533 for j in self.current_joints[:3]]  # only first 3, degrees to radians
+        viz_msg.position = [j * 0.0174533 for j in self.current_joints]  #degrees to radians
         self.viz_publisher.publish(viz_msg)
 
     # def motor_stat1_callback(self, stat):
