@@ -43,8 +43,7 @@ RUN cd /tmp/rover_ws && \
     rosdep install --from-paths src -i -r --rosdistro jazzy -y \
       --skip-keys "libopencv-dev libopencv-contrib-dev libopencv-imgproc-dev \
                    python-opencv python3-opencv ros-jazzy-ament-cmake-clang-tidy \
-                   python3-ikpy-pip" && \
-    rm -rf /tmp/rover_ws
+                   python3-ikpy-pip"
 
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/install/setup.bash" >> ~/.bashrc
